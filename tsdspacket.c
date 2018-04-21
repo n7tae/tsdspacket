@@ -30,7 +30,8 @@ void PrintPacket(const int len, const unsigned char *buf)
 		memcpy(pkt.title, buf+42, packetlen);
 
 		// print it
-		printf("\n**** DSRP %s **** ", (packetlen==48) ? "Header" : ((packetlen==21) ? "Data" : "Poll") );
+		printf("\n**** DSRP %s **** ", (packetlen==49) ? "Header" : ((packetlen==21) ? "Data" : "Poll") );
+		PrintUDPHeader(buf);
 		if (pkt.tag == 0xA) {
 			pkt.poll_msg[58] = '\0';	// make sure it's NULL terminated!
 			printf("Msg=%s\n", pkt.poll_msg);
@@ -150,12 +151,12 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 int main(int argc, char *argv[])
 {
+	printf("%s, Version 0.2, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
+	printf("%s comes with ABSOLUTELY NO WARRANTY; This is free software,\n", argv[0]);
+	printf("and you are welcome to redistribute it under certain conditions.\nPlease see the LICENSE file.\n");
 	int o = 0;
 	int count = 0;
 	do {
-		printf("%s, Version 0.1, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
-		printf("%s comes with ABSOLUTELY NO WARRANTY; This is free software, and\n", argv[0]);
-		printf("you are welcome to redistribute it under certain conditions.\nPlease see the LICENSE file.\n");
 		char line[200];
 		char *s = fgets(line, 200, stdin);
 		if (s == NULL)

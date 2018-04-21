@@ -8,7 +8,7 @@ BINDIR=/usr/local/bin
 # or, you can choose this for a much smaller executable without debugging help
 CFLAGS=-W -Wall
 
-tsdspacket :  $(OBJS)
+tsdspacket :  tsdspacket.c QnetTypeDefs.h
 	gcc $(CPPFLAGS) -o tsdspacket tsdspacket.c
 
 clean:
