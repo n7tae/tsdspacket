@@ -44,9 +44,9 @@ tag=21 id=EFB1 seq=01 err=00 ambe=BA492E4165CC5367A4 Slow Data='@Qu'
 This indicates that the packets were DSRP Header and Data packets.
 
 Three different formats of D-Star Packets are read and interpreted:
-o DSRP packets are internal header and data packets used by MMDVMHost, ircDDBGateway and QnetRelay.
-o DSTR packets are internal header and data packets used by QnetGateway, QnetRelay and modems directly supported by QnetGateway, namely QnetDVAP and QnetDVRPTR.
-o DSVT packets are external header and data packets used by all irc network clients, including ircDDBGateway and QnetGateway. It us also used by the QnetLink --> QnetGateway link, on the local UDP port 40000.
+1. DSRP packets are internal header and data packets used by MMDVMHost, ircDDBGateway and QnetRelay.
+2. DSTR packets are internal header and data packets used by QnetGateway, QnetRelay and modems directly supported by QnetGateway, namely QnetDVAP and QnetDVRPTR.
+3. DSVT packets are external header and data packets used by all irc network clients, including ircDDBGateway and QnetGateway. It us also used by the QnetLink --> QnetGateway link, on the local UDP port 40000.
 
 Other packets detected include DSRP and DSTR poll packets.
 
