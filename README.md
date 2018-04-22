@@ -60,3 +60,26 @@ tsdspacket < some_file
 
 If you accidently connect tshark to a port that doesn't contain DSRP, DSTR or DSVT packets, you'll get a lot of "unknown packet type" messages.
 
+## Cloning, Compiling and Installing.
+
+Easy:
+
+```
+git clone git://github.com/n7tae/tsdspacket.git
+cd tsdspacket
+make
+sudo make install
+# try it out!
+tsdspacket < sample
+```
+
+## Uninstalling
+
+```
+sudo make uninstall
+```
+Then you can remove the build directory and every trace of tsdspacket will be gone!
+
+73
+
+Tom n7tae (at) arrl (dot) net
