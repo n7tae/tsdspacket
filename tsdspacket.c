@@ -71,7 +71,7 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 		// put it in a packet struct
 		SDSTR pkt;
-		memcpy(pkt.pkt_id, buf, packetlen);
+		memcpy(pkt.pkt_id, buf+42, packetlen);
 
 		// print it
 		printf("\n**** DSTR %s **** ", (packetlen==58) ? "Header" : ((packetlen==29) ? "Data" : ((packetlen==26) ? "Poll" : "Data+")));
