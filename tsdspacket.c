@@ -96,7 +96,7 @@ void PrintPacket(const int len, const unsigned char *buf)
 			case 58:
 				printf("flag=%02X %02X %02X R2=%.8s R1=%.8s UR=%.8s MY=%.8s/%.4s checksum=%02X%02X\n",
 					pkt.vpkt.hdr.flag[0], pkt.vpkt.hdr.flag[1], pkt.vpkt.hdr.flag[2],
-					pkt.vpkt.hdr.r1, pkt.vpkt.hdr.r2, pkt.vpkt.hdr.ur, pkt.vpkt.hdr.my, pkt.vpkt.hdr.nm,
+					pkt.vpkt.hdr.r2, pkt.vpkt.hdr.r1, pkt.vpkt.hdr.ur, pkt.vpkt.hdr.my, pkt.vpkt.hdr.nm,
 					pkt.vpkt.hdr.pfcs[0], pkt.vpkt.hdr.pfcs[1]);
 				break;
 			case 32:
