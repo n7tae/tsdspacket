@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
+#include <arpa/inet.h>
 
 #include "QnetTypeDefs.h"
 
@@ -42,7 +43,7 @@ void PrintPacket(const int len, const unsigned char *buf)
 			case 49:
 				printf("flag=%02X %02X %02X R2=%.8s R1=%.8s UR=%.8s MY=%.8s/%.4s checksum=%04X\n",
 					pkt.header.flag[0], pkt.header.flag[1], pkt.header.flag[2],
-					pkt.header.r2, pkt.header.r1, pkt.header.yr, pkt.header.my, pkt.header.nm, pkt.header.pfcs);
+					pkt.header.r2, pkt.header.r1, pkt.header.yr, pkt.header.my, pkt.header.nm, ntohs(pkt.header.pfcs));
 				break;
 			case 21:
 				printf("err=%02X ambe=", pkt.voice.err);
@@ -76,13 +77,13 @@ void PrintPacket(const int len, const unsigned char *buf)
 		// print it
 		printf("\n**** DSTR %s **** ", (packetlen==58) ? "Header" : ((packetlen==29) ? "Data" : ((packetlen==26) ? "Poll" : "Data+")));
 		PrintUDPHeader(buf);
-		printf("counter=%04X, flag=%02X %02X %02X remaining=%02X ", pkt.counter, pkt.flag[0], pkt.flag[1], pkt.flag[2], pkt.remaining);
+		printf("counter=%04X, flag=%02X %02X %02X remaining=%02X ", ntohs(pkt.counter), pkt.flag[0], pkt.flag[1], pkt.flag[2], pkt.remaining);
 		if (packetlen == 26) {
 			printf("my=%.8s rpt=%.8s\n", pkt.spkt.mycall, pkt.spkt.rpt);
 			return;
 		}
 		printf("irc_id=%02X dst_rptr_id=%02X snd_rptr_id=%02X snd_term_id=%02X streamid=%04X, ctrl=%02X\n",
-			pkt.vpkt.icm_id, pkt.vpkt.dst_rptr_id, pkt.vpkt.snd_rptr_id, pkt.vpkt.snd_term_id, pkt.vpkt.streamid, pkt.vpkt.ctrl);
+			pkt.vpkt.icm_id, pkt.vpkt.dst_rptr_id, pkt.vpkt.snd_rptr_id, pkt.vpkt.snd_term_id, ntohs(pkt.vpkt.streamid), pkt.vpkt.ctrl);
 		switch (packetlen) {
 			case 29:
 				printf("ambe=");
