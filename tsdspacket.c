@@ -8,18 +8,23 @@
 void PrintUDPHeader(const unsigned char *buf)
 {
 	printf("UDP Header: IP %u.%u.%u.%u:%u --> %u.%u.%u.%u:%u\n",
-		buf[26], buf[27], buf[28], buf[29], 256*buf[34]+buf[35],
-		buf[30], buf[31], buf[32], buf[33], 256*buf[36]+buf[37]);
+		buf[0], buf[1], buf[2], buf[3], 256*buf[8]+buf[9],
+		buf[4], buf[5], buf[6], buf[7], 256*buf[10]+buf[11]);
 }
 
 void PrintPacket(const int len, const unsigned char *buf)
 {
-	int packetlen = buf[39] - 8;
+	int o;
+	for (o=16; o<len; o+=2) {	// start at 16 to make sure we can get the IP address and port number
+		if (0==memcmp(buf+o, "DSRP", 4) || 0==memcmp(buf+o, "DSTR", 4) || 0==memcmp(buf+o, "DSVT", 4))
+			break;
+	}
+	int packetlen = len - o;
 
-	if (0 == memcmp(buf+42, "DSRP", 4)) {
+	if (0 == memcmp(buf+o, "DSRP", 4)) {
 
 		// look for viable packets
-		if (buf[4]==0xA && packetlen<=64)
+		if (buf[o+4]==0xA && packetlen<=64)
 			;	// this is a poll packet
 		else if (packetlen!=49 && packetlen!=21) {
 			printf("\n!!!!!!!!!!!!!!!!!!Unknown DSRP packet size=%d!!!!!!!!!!!!!!!!!!\n", packetlen);
@@ -28,11 +33,11 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 		// put it in a packet struct
 		SDSRP pkt;
-		memcpy(pkt.title, buf+42, packetlen);
+		memcpy(pkt.title, buf+o, packetlen);
 
 		// print it
 		printf("\n**** DSRP %s **** ", (packetlen==49) ? "Header" : ((packetlen==21) ? "Data" : "Poll") );
-		PrintUDPHeader(buf);
+		PrintUDPHeader(buf+o-16);
 		if (pkt.tag == 0xA) {
 			pkt.poll_msg[58] = '\0';	// make sure it's NULL terminated!
 			printf("Msg=%s\n", pkt.poll_msg);
@@ -56,28 +61,43 @@ void PrintPacket(const int len, const unsigned char *buf)
 				break;
 		}
 
-	} else if (0 == memcmp(buf+42, "DSTR", 4)) {
+	} else if (0 == memcmp(buf+o, "DSTR", 4)) {
 
 		// Only accept expected lengths
 		switch (packetlen) {
 			case 58:
+			case 32:
 			case 29:
 			case 26:
-			case 32:
+			case 18:
+			case 10:
 				break;
 			default:
-				printf("\n!!!!!!!!!!!!!!!!!!Unknown DSVT packet size=%d!!!!!!!!!!!!!!!!!!\n", packetlen);
+				printf("\n!!!!!!!!!!!!!!!!!!Unknown DSTR packet size=%d!!!!!!!!!!!!!!!!!!\n", packetlen);
 				return;
 		}
 
 		// put it in a packet struct
 		SDSTR pkt;
-		memcpy(pkt.pkt_id, buf+42, packetlen);
+		memcpy(pkt.pkt_id, buf+o, packetlen);
 
 		// print it
-		printf("\n**** DSTR %s **** ", (packetlen==58) ? "Header" : ((packetlen==29) ? "Data" : ((packetlen==26) ? "Poll" : "Data+")));
-		PrintUDPHeader(buf);
+		printf("\n**** DSTR %s **** ", (packetlen==58) ? "Header" :
+									  ((packetlen==29) ? "Data" :
+									  ((packetlen==26) ? "Poll" :
+									  ((packetlen==29) ? "Data+" :
+									  ((packetlen==10) ? "Ack" : "Prompt")))));
+		PrintUDPHeader(buf+o-16);
 		printf("counter=%04X, flag=%02X %02X %02X remaining=%02X ", ntohs(pkt.counter), pkt.flag[0], pkt.flag[1], pkt.flag[2], pkt.remaining);
+		if (packetlen == 10) {
+			printf("\n");
+			return;
+		}
+		if (packetlen == 18) {
+			printf("Extra bytes = %02x %02x %02x %02x %02x %02x %02x %02x\n", pkt.spkt.mycall[0], pkt.spkt.mycall[1], pkt.spkt.mycall[2],
+				pkt.spkt.mycall[3], pkt.spkt.mycall[4], pkt.spkt.mycall[5], pkt.spkt.mycall[6], pkt.spkt.mycall[7]);
+			return;
+		}
 		if (packetlen == 26) {
 			printf("my=%.8s rpt=%.8s\n", pkt.spkt.mycall, pkt.spkt.rpt);
 			return;
@@ -111,7 +131,7 @@ void PrintPacket(const int len, const unsigned char *buf)
 				break;
 		}
 
-	} else if (0 == memcmp(buf+42, "DSVT", 4)) {
+	} else if (0 == memcmp(buf+o, "DSVT", 4)) {
 
 		// Only accept expected lengths!
 		if (packetlen!= 56 && packetlen!=27) {
@@ -121,11 +141,11 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 		// put it in a packet struct
 		SDSVT pkt;
-		memcpy(pkt.title, buf+42, packetlen);
+		memcpy(pkt.title, buf+o, packetlen);
 
 		// print it
 		printf("\n**** DSVT %s **** ", (packetlen==56) ? "Header" : "Data" );
-		PrintUDPHeader(buf);
+		PrintUDPHeader(buf+o-16);
 		printf("config=%02X id=%02X streamid=%04X counter=%02X ", pkt.config, pkt.id, pkt.streamid, pkt.counter);
 		printf("flaga=%02X %02X %02X flagb=%02X %02X %02X ", pkt.flaga[0], pkt.flaga[1], pkt.flaga[2], pkt.flagb[0], pkt.flagb[1], pkt.flagb[2]);
 		switch (packetlen) {
@@ -152,7 +172,7 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 int main(int argc, char *argv[])
 {
-	printf("%s, Version 0.2, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
+	printf("%s, Version 0.3, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
 	printf("%s comes with ABSOLUTELY NO WARRANTY; This is free software,\n", argv[0]);
 	printf("and you are welcome to redistribute it under certain conditions.\nPlease see the LICENSE file.\n");
 	int o = 0;

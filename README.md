@@ -32,7 +32,7 @@ will read the local DSPR-formated header and voice D-Star UDP packets between MM
 
 ```
 **** DSRP Header **** UDP Header: IP 127.0.0.1:20011 --> 127.0.0.1:20010
-tag=20 id=EFB1 seq=00 flag=00 00 00 R2=N7TAE  G R1=N7TAE  C UR=QNTEST T MY=N7TAE   /TOM  checksum=52D3
+tag=20 id=EFB1 seq=00 flag=00 00 00 R2=N7TAE  G R1=N7TAE  C UR=QNTEST T MY=N7TAE   /TOM  checksum=D352
 
 **** DSRP Data **** UDP Header: IP 127.0.0.1:20011 --> 127.0.0.1:20010
 tag=21 id=EFB1 seq=00 err=00 ambe=CECC2E31E5176861F0 Slow data=<SYNC> {0x55, 0x2d, 0x16}
