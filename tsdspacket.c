@@ -48,7 +48,8 @@ void PrintPacket(const int len, const unsigned char *buf)
 			case 49:
 				printf("flag=%02X %02X %02X R2=%.8s R1=%.8s UR=%.8s MY=%.8s/%.4s checksum=%04X\n",
 					pkt.header.flag[0], pkt.header.flag[1], pkt.header.flag[2],
-					pkt.header.r2, pkt.header.r1, pkt.header.yr, pkt.header.my, pkt.header.nm, ntohs(pkt.header.pfcs));
+					pkt.header.r2, pkt.header.r1, pkt.header.ur, pkt.header.my, pkt.header.nm,
+					ntohs((unsigned short int)(pkt.header.pfcs[0]*256+pkt.header.pfcs[1])));
 				break;
 			case 21:
 				printf("err=%02X ambe=", pkt.voice.err);
@@ -146,7 +147,7 @@ void PrintPacket(const int len, const unsigned char *buf)
 		// print it
 		printf("\n**** DSVT %s **** ", (packetlen==56) ? "Header" : "Data" );
 		PrintUDPHeader(buf+o-16);
-		printf("config=%02X id=%02X streamid=%04X counter=%02X ", pkt.config, pkt.id, pkt.streamid, pkt.counter);
+		printf("config=%02X id=%02X streamid=%04X counter=%02X ", pkt.config, pkt.id, pkt.streamid, pkt.ctrl);
 		printf("flaga=%02X %02X %02X flagb=%02X %02X %02X ", pkt.flaga[0], pkt.flaga[1], pkt.flaga[2], pkt.flagb[0], pkt.flagb[1], pkt.flagb[2]);
 		switch (packetlen) {
 			case 56:
