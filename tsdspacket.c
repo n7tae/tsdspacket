@@ -12,7 +12,7 @@ void PrintUDPHeader(const unsigned char *buf)
 		buf[4], buf[5], buf[6], buf[7], 256*buf[10]+buf[11]);
 }
 
-void PrintPacket(const int len, const unsigned char *buf)
+void PrintPacket(const int len, const unsigned char *buf, const int header_only)
 {
 	int o;
 	for (o=16; o<len; o+=2) {	// start at 16 to make sure we can get the IP address and port number
@@ -23,12 +23,13 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 	if (0 == memcmp(buf+o, "DSRP", 4)) {
 
+		if (header_only && packetlen!=49)
+			return;
 		// look for viable packets
 		if (buf[o+4]==0xA && packetlen<=64)
 			;	// this is a poll packet
 		else if (packetlen!=49 && packetlen!=21) {
 			printf("\n!!!!!!!!!!!!!!!!!!Unknown DSRP packet size=%d!!!!!!!!!!!!!!!!!!\n", packetlen);
-			return;
 		}
 
 		// put it in a packet struct
@@ -64,6 +65,8 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 	} else if (0 == memcmp(buf+o, "DSTR", 4)) {
 
+		if (header_only && packetlen!=58)
+			return;
 		// Only accept expected lengths
 		switch (packetlen) {
 			case 58:
@@ -134,6 +137,8 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 	} else if (0 == memcmp(buf+o, "DSVT", 4)) {
 
+		if (header_only && packetlen!=56)
+			return;
 		// Only accept expected lengths!
 		if (packetlen!= 56 && packetlen!=27) {
 			printf("\n!!!!!!!!!!!!!!!!!!Unknown DSVT packet size=%d!!!!!!!!!!!!!!!!!!\n", packetlen);
@@ -173,9 +178,22 @@ void PrintPacket(const int len, const unsigned char *buf)
 
 int main(int argc, char *argv[])
 {
-	printf("%s, Version 0.3, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
+	printf("%s, Version 0.4, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
 	printf("%s comes with ABSOLUTELY NO WARRANTY; This is free software,\n", argv[0]);
 	printf("and you are welcome to redistribute it under certain conditions.\nPlease see the LICENSE file.\n");
+
+	int only_header = 0;
+	if (argc) {
+		for (int i=1; i<argc; i++) {
+			if (strstr(argv[i], "header"))
+				only_header = 1;
+			if (strstr(argv[i], "help")) {
+				printf("usage: %s header\t\t #Only prints header packets\n", argv[0]);
+				return 0;
+			}
+		}
+	}
+
 	int o = 0;
 	int count = 0;
 	do {
@@ -191,7 +209,7 @@ int main(int argc, char *argv[])
 			u+o, u+o+1, u+o+2, u+o+3, u+o+4, u+o+5, u+o+6, u+o+7, u+o+8, u+o+9, u+o+10, u+o+11, u+o+12, u+o+13, u+o+14, u+o+15);
 		o += count;
 		if (count != 16 && o) {
-			PrintPacket(o, u);
+			PrintPacket(o, u, only_header);
 			o = 0;
 		}
 	} while (count != EOF);
