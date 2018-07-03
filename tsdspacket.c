@@ -172,13 +172,14 @@ void PrintPacket(const int len, const unsigned char *buf, const int header_only)
 		}
 
 	} else {
-		printf("\n!!!!!!!!!!!!!!!!!!unknown packet type with length %d!!!!!!!!!!!!!!!!!!\n", len);
+		if (! header_only)
+			printf("\n!!!!!!!!!!!!!!!!!!unknown packet type with length %d!!!!!!!!!!!!!!!!!!\n", len);
 	}
 }
 
 int main(int argc, char *argv[])
 {
-	printf("%s, Version 0.4, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
+	printf("%s, Version 0.5, Copyright (C) 2018 by Thomas A. Early N7TAE\n", argv[0]);
 	printf("%s comes with ABSOLUTELY NO WARRANTY; This is free software,\n", argv[0]);
 	printf("and you are welcome to redistribute it under certain conditions.\nPlease see the LICENSE file.\n");
 
