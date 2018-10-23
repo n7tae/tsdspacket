@@ -15,9 +15,8 @@ clean:
 	$(RM) *.o tsdspacket
 
 # install, uninstall need root priviledges
-install : sgs
+install : tsdspacket
 	$(CP) -f tsdspacket $(BINDIR)
 
 uninstall :
 	$(RM) -f $(BINDIR)/tsdspacket
-
