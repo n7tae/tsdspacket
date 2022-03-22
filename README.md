@@ -65,7 +65,7 @@ If you accidently connect tshark to a port that doesn't contain DSRP, DSTR or DS
 Easy:
 
 ```
-git clone git://github.com/n7tae/tsdspacket.git
+git clone https://github.com/n7tae/tsdspacket.git
 cd tsdspacket
 make
 sudo make install

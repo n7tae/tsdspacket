@@ -9,7 +9,7 @@ BINDIR=/usr/local/bin
 CFLAGS=-W -Wall
 
 tsdspacket :  tsdspacket.c QnetTypeDefs.h
-	gcc $(CPPFLAGS) -o tsdspacket tsdspacket.c
+	g++ $(CPPFLAGS) -o tsdspacket tsdspacket.c
 
 clean:
 	$(RM) *.o tsdspacket
