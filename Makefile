@@ -8,8 +8,8 @@ BINDIR=/usr/local/bin
 # or, you can choose this for a much smaller executable without debugging help
 CFLAGS=-W -Wall
 
-tsdspacket :  tsdspacket.c QnetTypeDefs.h
-	g++ $(CPPFLAGS) -o tsdspacket tsdspacket.c
+tsdspacket :  tsdspacket.cpp QnetTypeDefs.h
+	g++ $(CPPFLAGS) -o tsdspacket tsdspacket.cpp
 
 clean:
 	$(RM) *.o tsdspacket
