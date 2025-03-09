@@ -87,10 +87,11 @@ void PrintPacket(const int len, const unsigned char *buf, const int header_only)
 
 		// print it
 		printf("\n**** DSTR %s **** ", (packetlen==58) ? "Header" :
+									  ((packetlen==32) ? "Data+" :
 									  ((packetlen==29) ? "Data" :
 									  ((packetlen==26) ? "Poll" :
-									  ((packetlen==29) ? "Data+" :
-									  ((packetlen==10) ? "Ack" : "Prompt")))));
+									  ((packetlen==18) ? "Prompt" :
+									                     "Ackn")))));	// 10 bytes!
 		PrintUDPHeader(buf+o-16);
 		printf("counter=%04X, flag=%02X %02X %02X remaining=%02X ", ntohs(pkt.counter), pkt.flag[0], pkt.flag[1], pkt.flag[2], pkt.remaining);
 		if (packetlen == 10) {
