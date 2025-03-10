@@ -7,7 +7,7 @@ Reading from the standard input, **tsdspacket** interprets UDP D-Star packets fr
 ```
 tshark -i lo -f "udp port 20010" -x | tsdspacket
 ```
-will read the local DSPR-formated header and voice D-Star UDP packets between MMDVMHost and the D-Star gateway. Executed without pipe redirection, `tshark -i lo -f "udp port 2010 -x` will produce output like:
+will read the local DSPR-formated header and voice D-Star UDP packets between MMDVMHost and the D-Star gateway. Executed without pipe redirection, `tshark -i lo -f "udp port 2010" -x` will produce output like:
 
 ```
 0000  00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00   ..............E.
